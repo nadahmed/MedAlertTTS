@@ -49,8 +49,13 @@ def speak(text):
     from pygame import mixer
     mixer.init()
     with open('temp.mp3', 'wb') as f:
-        tts = gTTS(text=text, lang='bn')
-        tts.write_to_fp(f)
+        while 1:
+            try:
+                tts = gTTS(text=text, lang='bn')
+                tts.write_to_fp(f)
+                break
+            except gtts.tts.gTTSError:
+                continue
     mp3 = mixer.music.load('temp.mp3')
     mixer.music.play()
     wait(mixer)
