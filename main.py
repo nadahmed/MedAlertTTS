@@ -86,9 +86,7 @@ async def main():
     #         if dicts['isChecked']:
     #             schedule.every(15).seconds.do(voice, myDict = dicts , myTime=t['beforeMeal']) # for debugging
     #             # schedule.every().day.at(t['time']).do(voice, myDict = dicts)
-    task = asyncio.create_task(sch())
-
-    await task
+    
 
 def scheduler(meds):
     schedule.clear()
@@ -112,13 +110,15 @@ def sch_textmaker(name , myTime, notes):
         text+='ঔষধ খাবার আগে কিছু খেয়ে নিবেন।'
     if notes != '':
         text+= ' এবং সাথে আপনার কিছু নোট। যা হচ্চে, '+ notes + '।'
-    print(text)
-    return text
+    return text.encode('utf-8')
     # translator = Translator()
     # text = translator.translate(text, dest='bn').text
 
 if __name__ == "__main__":
    
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    task = loop.create_task(sch())
+    loop.run_until_complete(main())
+    # asyncio.run(main())
         
     
