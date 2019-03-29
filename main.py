@@ -18,9 +18,9 @@ def stream_handler(message):
             else:
                 medicine[path] = message['data']
         text = 'আমি এখন up to date!'
-        print(medicine)
+        #print(medicine)
         scheduler(medicine)
-        print('\n')
+        #print('\n')
         speak(text)
 
 def getData(email,password):
