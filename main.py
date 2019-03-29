@@ -10,17 +10,23 @@ medicine={}
 
 def stream_handler(message):
     global medicine
-    if message['data']:
-        path = str(str(message['path']).rsplit('/',1)[1])
+    path = str(message['path']).rsplit('/',1)[1]
+    if message['event']=='patch':
+        for k in message['data']:
+            medicine[path][k]= message['data'][k]
+        text ='আচ্ছা।'
+        speak(text)
+    if message['event']=='put':
         for key in message['data']:
             if path == '':
                 medicine = message['data']
             else:
                 medicine[path] = message['data']
         text = 'আমি এখন up to date!'
-        #print(medicine)
+        # print(medicine.encode('utf-8'))
+        # print(medicine)
         scheduler(medicine)
-        #print('\n')
+        print('\n')
         speak(text)
 
 def getData(email,password):
@@ -59,14 +65,6 @@ async def sch():
 async def main():
     print('Time: {}'.format(time.process_time()))
     docs = getData(secrets.username, secrets.password)
-    # for doc in docs:
-    #     dicts = doc.to_dict()
-    #     print(dicts)
-    #     for t in dicts['time']:
-    #         if dicts['isChecked']:
-    #             schedule.every(15).seconds.do(voice, myDict = dicts , myTime=t['beforeMeal']) # for debugging
-    #             # schedule.every().day.at(t['time']).do(voice, myDict = dicts)
-    
 
 def scheduler(meds):
     schedule.clear()
@@ -77,9 +75,10 @@ def scheduler(meds):
         checked = meds[k]['isChecked']
         
         for t in time:
-            text = sch_textmaker(name,t['beforeMeal'],notes)
-            schedule.every(15).seconds.do(speak, text = text) # for debugging
-            # schedule.every().day.at(t['time']).do(speak, text = text)
+            if checked:
+                text = sch_textmaker(name,t['beforeMeal'],notes)
+                # schedule.every(15).seconds.do(speak, text = text) # for debugging
+                schedule.every().day.at(t['time']).do(speak, text = text)
 
 def sch_textmaker(name , myTime, notes):
     text= "আপনার ঔষধ খাবার সময় হয়েছে।"
