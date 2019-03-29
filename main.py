@@ -5,6 +5,7 @@ import asyncio
 import schedule
 import pyrebase
 import secrets
+from pygame import mixer
 
 medicine={}
 
@@ -23,14 +24,14 @@ def stream_handler(message):
             else:
                 medicine[path] = message['data']
         text = 'আমি এখন up to date!'
-        # print(medicine.encode('utf-8'))
-        # print(medicine)
-        scheduler(medicine)
-        print('\n')
         speak(text)
+    # print(medicine.encode('utf-8'))
+    print(medicine)
+    scheduler(medicine)
+    print('\n')
+        
 
 def getData(email,password):
-    
     print('INITIALIZING FIREBASE')
     firebase = pyrebase.initialize_app(secrets.config)
     user = firebase.auth().sign_in_with_email_and_password(email,password)
@@ -45,8 +46,9 @@ def wait(mixer):
         pass
         
 def speak(text):
-    
-    from pygame import mixer
+
+    print('\nTrying to speak\n')
+
     mixer.init()
     with open('temp.mp3', 'wb') as f:
         while 1:
@@ -54,7 +56,7 @@ def speak(text):
                 tts = gTTS(text=text, lang='bn')
                 tts.write_to_fp(f)
                 break
-            except gtts.tts.gTTSError:
+            except:
                 continue
     mp3 = mixer.music.load('temp.mp3')
     mixer.music.play()
