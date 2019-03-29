@@ -30,17 +30,7 @@ def getData(email,password):
     user = firebase.auth().sign_in_with_email_and_password(email,password)
     db = firebase.database()
     ref = db.child('users', user['localId'], 'medicines')
-    # datas = ref.get().val()
-    # print(datas)
     ref.stream(stream_handler)
-    # users_ref = db.collection('users').document(user['localId']).collection(u'medicines')
-    # new_users_ref = db.collection('users')
-    # try:
-    #     docs = users_ref.get()
-    #     new_users_ref.on_snapshot(on_snapshot)
-    #     return docs
-    # except:
-    #     print('Something went wrong!')
 
 
 
@@ -49,16 +39,6 @@ def wait(mixer):
         pass
         
 def speak(text):
-    # text= "আপনার ঔষধ খাবার সময় হয়েছে।"
-    # text+= 'ঔষধ এর নাম ' + myDict['name'] + '।'
-    # if myTime:
-    #     text+='ঔষধ টি খাবেন খালি পেট এ।'
-    # else:
-    #     text+='ঔষধ খাবার আগে কিছু খেয়ে নিবেন।'
-    # text+= ' এবং সাথে আপনার কিছু নোট। যা হচ্চে, '+ myDict['notes'] + '।'
-    # print(text)
-    # translator = Translator()
-    # text = translator.translate(text, dest='bn').text
     
     from pygame import mixer
     mixer.init()
@@ -98,8 +78,8 @@ def scheduler(meds):
         
         for t in time:
             text = sch_textmaker(name,t['beforeMeal'],notes)
-            # schedule.every(15).seconds.do(speak, text = text) # for debugging
-            schedule.every().day.at(t['time']).do(speak, text = text)
+            schedule.every(15).seconds.do(speak, text = text) # for debugging
+            # schedule.every().day.at(t['time']).do(speak, text = text)
 
 def sch_textmaker(name , myTime, notes):
     text= "আপনার ঔষধ খাবার সময় হয়েছে।"
@@ -110,15 +90,17 @@ def sch_textmaker(name , myTime, notes):
         text+='ঔষধ খাবার আগে কিছু খেয়ে নিবেন।'
     if notes != '':
         text+= ' এবং সাথে আপনার কিছু নোট। যা হচ্চে, '+ notes + '।'
-    return text.encode('utf-8')
+    return text
     # translator = Translator()
     # text = translator.translate(text, dest='bn').text
 
 if __name__ == "__main__":
    
     loop = asyncio.get_event_loop()
-    task = loop.create_task(sch())
-    loop.run_until_complete(main())
+    loop.create_task(sch())
+    loop.create_task(main())
+    loop.run_forever()
+    # loop.run_until_complete(main())
     # asyncio.run(main())
         
     
